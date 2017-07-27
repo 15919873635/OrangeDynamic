@@ -17,9 +17,12 @@ public class StringUtil {
 	public static boolean isBlank(String arg){
 		if(isEmpty(arg))
 			return true;
-		else{
-			return false;
-		}
+		for (int i = 0; i < arg.length(); i++) {
+            if ((Character.isWhitespace(arg.charAt(i)) == false)) {
+                return false;
+            }
+        }
+		return true;
 	}
 	
 	public static boolean isNumbic(String arg){
