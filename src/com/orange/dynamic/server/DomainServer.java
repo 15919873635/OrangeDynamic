@@ -11,10 +11,16 @@ import java.util.logging.Logger;
 
 
 import com.orange.dynamic.Compent;
+import com.orange.dynamic.consts.ServerConsts;
 import com.orange.dynamic.listener.DefaultServerHandler;
 import com.orange.dynamic.listener.ServerHandler;
 
 public class DomainServer implements Compent{
+	private int serverPort = ServerConsts.SERVER_DEFAULT_PORT; 
+	public DomainServer(){}
+	public DomainServer(int serverPort){
+		this.serverPort = serverPort;
+	}
     //select方法等待信道准备好的最长时间
     private static final int TIMEOUT = 3000;
 	private ServerSocketChannel serverSocket;
@@ -28,7 +34,7 @@ public class DomainServer implements Compent{
 			//实例化一个信道
 			serverSocket = ServerSocketChannel.open();
 	        //将该信道绑定到指定端口
-			serverSocket.socket().bind(new InetSocketAddress(1321));
+			serverSocket.socket().bind(new InetSocketAddress(serverPort));
 	        //配置信道为非阻塞模式
 			serverSocket.configureBlocking(false);
 	        //将选择器注册到各个信道

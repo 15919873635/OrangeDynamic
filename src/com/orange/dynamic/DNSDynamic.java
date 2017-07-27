@@ -11,10 +11,22 @@ public class DNSDynamic {
 		Compent compent = null;
 		if(args.length > 0 && !StringUtil.isBlank(args[0])){
 			String mode = args[0];
-			if(mode.equals(ServerConsts.SERVER_MODE))
-				compent = new DomainServer();
-			else
-				compent = new DomainClient();
+			if(mode.equals(ServerConsts.SERVER_MODE)){
+				if(args.length == 1)
+					compent = new DomainServer();
+				else{
+					int serverPort = Integer.parseInt(args[1]);
+					compent = new DomainServer(serverPort);
+				}
+			}
+			else{
+				if(args.length == 1)
+					compent = new DomainClient();
+				else{
+					int serverPort = Integer.parseInt(args[1]);
+					compent = new DomainClient(serverPort);
+				}
+			}
 		}else
 			compent = new DomainServer();
 		compent.start();
