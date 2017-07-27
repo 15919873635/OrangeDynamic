@@ -18,7 +18,7 @@ public class DomainClient implements Compent{
 	private String address = ClientConsts.CLIENT_DEFAULT_ADDRESS;
 	private int serverPort = ClientConsts.SERVER_DEFAULT_PORT;
 	
-	private SocketChannel socketChannel = null;
+	private SocketChannel socket = null;
 	
 	public DomainClient(){}
 	
@@ -33,12 +33,10 @@ public class DomainClient implements Compent{
 	
 	@Override
 	public void start() {
-		SocketChannel socketChannel = null;  
         try {  
-            socketChannel = SocketChannel.open();  
+    		socket = SocketChannel.open();  
             SocketAddress socketAddress = new InetSocketAddress(address, serverPort);  
-            socketChannel.connect(socketAddress);  
-
+            socket.connect(socketAddress);
             String myRequestObject = "sdsdsds";
             sendData(myRequestObject);
             Object myResponseObject = receiveData();  
@@ -46,7 +44,7 @@ public class DomainClient implements Compent{
             ex.printStackTrace();  
         } finally {  
             try {  
-                socketChannel.close();  
+            	socket.close();  
             } catch(Exception ex) {}  
         }  
 	}
@@ -58,7 +56,7 @@ public class DomainClient implements Compent{
             oos.writeObject(obj);  
             byte[] bytes = baos.toByteArray();  
             ByteBuffer buffer = ByteBuffer.wrap(bytes);  
-            socketChannel.write(buffer); 
+            socket.write(buffer); 
         } catch(IOException ex) {  
             throw new RuntimeException(ex.getMessage(), ex);  
         } finally {  
@@ -68,8 +66,7 @@ public class DomainClient implements Compent{
         }
     } 
 	
-	private Object receiveData() 
-			throws IOException{
+	private Object receiveData() throws IOException{
 		Object obj = null;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectInputStream ois = null;  
@@ -77,7 +74,7 @@ public class DomainClient implements Compent{
             ByteBuffer buffer = ByteBuffer.allocateDirect(1024);  
             byte[] bytes;  
             int count = 0;  
-            while ((count = socketChannel.read(buffer)) >= 0) {  
+            while ((count = socket.read(buffer)) >= 0) {  
                 buffer.flip();  
                 bytes = new byte[count];  
                 buffer.get(bytes);  
@@ -88,7 +85,7 @@ public class DomainClient implements Compent{
             ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
             ois = new ObjectInputStream(bais);  
             obj = ois.readObject();
-            socketChannel.socket().shutdownInput();  
+            socket.socket().shutdownInput();  
         } catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} finally {  
@@ -102,6 +99,10 @@ public class DomainClient implements Compent{
 	
 	@Override
 	public void stop() {
-		
+		try {
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
